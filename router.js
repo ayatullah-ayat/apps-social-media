@@ -1,4 +1,4 @@
-console.log('i am executed immediately')
+console.log('i am executed/invoked immediately')
 const express = require('express');
 const router = express.Router();
 
