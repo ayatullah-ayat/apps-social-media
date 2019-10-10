@@ -15,4 +15,4 @@ app.use(express.static('public'))
 const router = require('./router') // requiring our own file
 // '/' uses for basic url
 app.use('/', router)
-app.listen(3000)
+module.exports = app;
