@@ -1,8 +1,16 @@
 const User = require('../models/User')
 
-exports.login = function() {
 
+
+
+exports.login = function(req, res) {
+    const user = new User(req.body)
+    user.login()
+    .then((responseMessage) => res.send(responseMessage))
+    .catch((error) => res.send(error))
 }
+
+
 exports.logout = function() {
     
 }
