@@ -1,6 +1,18 @@
 // init express
 const express = require('express');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+
 const app = express();
+//configure session options
+let sessionOptions = session({
+    secret: "this is my first session work",
+    store: new MongoStore({client: require('./db')}),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {maxAge: 1000 * 60 * 60 * 60, httpOnly: true}
+})
+app.use(sessionOptions);
 // set up views folder to render html docs
 app.set('views', 'views');
 app.set('view engine', 'ejs')
