@@ -26,20 +26,25 @@ exports.logout = function(req, res) {
         res.redirect('/')
     })
 }
-exports.register = function(req, res) {
+exports.register = async function(req, res) {
     let user = new User(req.body);
-    user.register();
-    if(user.errors.length) {
-
-        user.errors.forEach(err => {
+    user.register()
+    .then(() => {
+        req.session.user = {favColor: 'white', username: user.data.username}
+        req.session.save(function(){
+            res.redirect('/')
+        })
+    })
+    //catch start
+    .catch((regErrors) => {
+        regErrors.forEach((err) => {
             req.flash('regError', err)
         })
         req.session.save(function() {
             res.redirect('/')
         })
-    }else{
-        res.send('congrats! you have successfully registerrr!')
-    }
+    })
+    //catch end
 }
 exports.home = function(req, res) {
     // get trus by checking session
