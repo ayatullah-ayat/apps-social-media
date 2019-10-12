@@ -6,20 +6,37 @@ exports.login = function(req, res) {
     .then((responseMessage) => {
         // setup session
         req.session.user = {favColor: "white", username: user.data.username}
-        res.send(responseMessage)
+        // redirect the homepage after successfully save in the database
+        req.session.save(function() {
+            res.redirect('/')
+        })
     })
-    .catch((error) => res.send(error))
+    .catch((error) => {
+        req.flash('info', error)
+        req.session.save(function(){
+            res.redirect('/')
+        })
+    })
 }
 
 
-exports.logout = function() {
-    
+exports.logout = function(req, res) {
+    // destroy the session after user logout and redirect the homepage
+    req.session.destroy(function(){
+        res.redirect('/')
+    })
 }
 exports.register = function(req, res) {
     let user = new User(req.body);
     user.register();
     if(user.errors.length) {
-        res.send(user.errors)
+
+        user.errors.forEach(err => {
+            req.flash('regError', err)
+        })
+        req.session.save(function() {
+            res.redirect('/')
+        })
     }else{
         res.send('congrats! you have successfully registerrr!')
     }
@@ -27,8 +44,8 @@ exports.register = function(req, res) {
 exports.home = function(req, res) {
     // get trus by checking session
     if(req.session.user){
-        res.render('home-dashboard')
+        res.render('home-dashboard', {username: req.session.user.username})
     }else{
-        res.render('home-guest')
+        res.render('home-guest', {errors: req.flash('info'), regError: req.flash('regError')})
     }
 }

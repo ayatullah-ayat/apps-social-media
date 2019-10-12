@@ -2,6 +2,7 @@
 const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+const flash = require('connect-flash');
 
 const app = express();
 //configure session options
@@ -13,6 +14,7 @@ let sessionOptions = session({
     cookie: {maxAge: 1000 * 60 * 60 * 60, httpOnly: true}
 })
 app.use(sessionOptions);
+app.use(flash())
 // set up views folder to render html docs
 app.set('views', 'views');
 app.set('view engine', 'ejs')

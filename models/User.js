@@ -41,7 +41,7 @@ User.prototype.login = function() {
             if(resData && bcrypt.compareSync(this.data.password, resData.password)){
                 resolve("login attempt successfull")
             }else{
-                reject("login attempt unsuccessfull")
+                reject("invalid username/password")
             }
         })
         .catch(err => {
