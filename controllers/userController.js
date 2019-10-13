@@ -1,5 +1,16 @@
 const User = require('../models/User')
 
+// user needs to loggedin to create new post
+exports.mustBeLoggedIn = function(req, res, next) {
+    if(req.session.user){
+        next()
+    }else{
+        req.flash('info', 'You must be logged in, to perform this page')
+        req.session.save(function() {
+            res.redirect('/')
+        })
+    }
+}
 exports.login = function(req, res) {
     const user = new User(req.body)
     user.login()
@@ -48,7 +59,7 @@ exports.register = async function(req, res) {
 exports.home = function(req, res) {
     // get trus by checking session
     if(typeof req.session.user === 'object'){
-        res.render('home-dashboard', {username: req.session.user.username, avatar: req.session.user.avatar})
+        res.render('home-dashboard')
     }else{
         res.render('home-guest', {errors: req.flash('info'), regError: req.flash('regError')})
     }
