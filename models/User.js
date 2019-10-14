@@ -60,6 +60,7 @@ User.prototype.login = function() {
         userCollections.findOne({username: this.data.username})
         .then((resData)=> {
             if(resData && bcrypt.compareSync(this.data.password, resData.password)){
+                this.data = resData
                 this.getAvatar(resData.email)
                 resolve()
             }else{

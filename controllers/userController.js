@@ -12,10 +12,11 @@ exports.mustBeLoggedIn = function(req, res, next) {
     }
 }
 exports.login = function(req, res) {
-    const user = new User(req.body)
+    let user = new User(req.body)
     user.login()
     .then((responseMessage) => {
-        req.session.user = {avatar: user.avatar, username: user.data.username}
+        console.log(user)
+        req.session.user = {avatar: user.avatar, username: user.data.username, _id: user.data._id}
         // redirect the homepage after successfully save in the database
         req.session.save(function() {
             res.redirect('/')
@@ -40,7 +41,8 @@ exports.register = async function(req, res) {
     let user = new User(req.body);
     user.register()
     .then(() => {
-        req.session.user = {avatar: user.avatar, username: user.data.username}
+        console.log(user)
+        req.session.user = {avatar: user.avatar, username: user.data.username, _id: user.data._id}
         req.session.save(function(){
             res.redirect('/')
         })
