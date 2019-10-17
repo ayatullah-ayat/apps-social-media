@@ -5,9 +5,12 @@ const validator = require('validator');
 const md5 = require('md5')
 
 
-let User = function(data) {
+let User = function(data, isAvatarNeed) {
     this.data = data;
     this.errors = [];
+    
+    if(isAvatarNeed == 'undefined') {isAvatarNeed = false}
+    if(isAvatarNeed) {this.getAvatar(this.data.email)}
 }
 
 User.prototype.cleanUp = function() {
