@@ -1,4 +1,5 @@
 const User = require('../models/User')
+const Post = require('../models/Post')
 
 // user needs to loggedin to create new post
 exports.mustBeLoggedIn = function(req, res, next) {
@@ -65,4 +66,33 @@ exports.home = function(req, res) {
     }else{
         res.render('home-guest', {errors: req.flash('info'), regError: req.flash('regError')})
     }
+}
+
+exports.ifUserExists = function(req, res, next) {
+    User.findByUserName(req.params.username).then((userDocument) => {
+        // save req object with an property profileUser
+        console.log(userDocument)
+        req.profileUser = userDocument
+        next()
+    }).catch((err) => {
+        res.render('404')
+    })
+}
+
+exports.profilePostsScreen = function(req, res) {
+    // query posts with a certain author name
+    Post.findPostsByAuthor(req.profileUser._id)
+    .then((posts) => {
+        res.render('profile', {
+            posts: posts,
+            profileUserName: req.profileUser.username,
+            profileAvatar: req.profileUser.avatar
+        })
+    })
+    .catch(() => {
+        res.render('404')
+    })
+
+
+    
 }

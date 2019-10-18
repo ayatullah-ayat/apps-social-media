@@ -95,4 +95,31 @@ User.prototype.register = function() {
 User.prototype.getAvatar = function(getEmail) {
     this.avatar = `https://gravatar.com/avatar/${md5(getEmail)}?s=128`;
 }
+User.findByUserName = async function(username) {
+    return new Promise(async (resolve, reject) =>{
+        if(typeof(username) != 'string') {
+            reject()
+            return
+        }
+        userCollections.findOne({username: username})
+        .then(userDoc => {
+            if(userDoc){
+                userDoc = new User(userDoc, true)
+                //override userDoc
+                userDoc = {
+                    _id: userDoc.data._id,
+                    username: userDoc.data.username,
+                    avatar: userDoc.avatar
+                }
+                resolve(userDoc)
+            }else {
+                reject()
+            }
+        })
+        .catch(() => {reject()})
+    })
+}
+
+
+
 module.exports = User;
