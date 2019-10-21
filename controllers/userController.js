@@ -6,7 +6,7 @@ exports.mustBeLoggedIn = function(req, res, next) {
     if(req.session.user){
         next()
     }else{
-        req.flash('info', 'You must be logged in, to perform this page')
+        req.flash('errors', 'You must be logged in, to perform this page')
         req.session.save(function() {
             res.redirect('/')
         })
@@ -24,7 +24,7 @@ exports.login = function(req, res) {
         })
     })
     .catch((error) => {
-        req.flash('info', error)
+        req.flash('errors', error)
         req.session.save(function(){
             res.redirect('/')
         })
@@ -64,7 +64,7 @@ exports.home = function(req, res) {
     if(typeof req.session.user === 'object'){
         res.render('home-dashboard')
     }else{
-        res.render('home-guest', {errors: req.flash('info'), regError: req.flash('regError')})
+        res.render('home-guest', {regError: req.flash('regError')})
     }
 }
 
