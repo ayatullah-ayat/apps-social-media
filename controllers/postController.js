@@ -73,3 +73,7 @@ exports.edit = function(req, res) {
         })
     })
 }
+
+exports.delete = function(req, res) {
+    
+}
