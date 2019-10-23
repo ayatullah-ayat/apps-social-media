@@ -75,5 +75,18 @@ exports.edit = function(req, res) {
 }
 
 exports.delete = function(req, res) {
-    
+    Post.deleteThisItem(req.params.id, req.visitorId)
+    .then(() => {
+        req.flash("success", "you have successfully deleted")
+        req.session.save(() => {
+            res.redirect(`/profile/${req.session.user.username}`)
+        })
+    })
+    .catch(() => {
+        req.flash("errors", "You do not have permission to perform this page")
+        req.session.save(() => {
+            res.redirect('/')
+        })
+        console.log('failed to connect mongoDB')
+    })
 }
