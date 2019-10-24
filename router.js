@@ -15,7 +15,8 @@ router.post('/create-post', userController.mustBeLoggedIn, postController.create
 router.get('/post/:id', postController.viewSinglePost)
 router.get('/post/:id/edit', userController.mustBeLoggedIn, postController.viewEditScreen)
 router.post('/post/:id/edit', userController.mustBeLoggedIn, postController.edit)
-router.post('/post/:id/delete', postController.delete)
+router.post('/post/:id/delete', userController.mustBeLoggedIn, postController.delete)
+router.post('/search', postController.search)
 // profile related router
 router.get('/profile/:username', userController.ifUserExists, userController.profilePostsScreen)
 module.exports = router;

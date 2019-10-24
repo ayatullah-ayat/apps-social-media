@@ -90,3 +90,11 @@ exports.delete = function(req, res) {
         console.log('failed to connect mongoDB')
     })
 }
+
+exports.search = function(req, res) {
+    Post.searchItem(req.body.searchTerm).then(resData => {
+        res.json(resData)
+    }).catch(() => {
+        res.json([])
+    })
+}

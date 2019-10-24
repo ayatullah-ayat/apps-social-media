@@ -83,7 +83,7 @@ Post.prototype.actuallyUpdate = function() {
     })
 }
 
-
+// READ FROM MONGODB
 Post.reusablePostQuery = function(uniqueOperation, visitorId) {
     return new Promise(async (resolve, reject) => {
         let aggOperation = uniqueOperation.concat([
@@ -100,6 +100,7 @@ Post.reusablePostQuery = function(uniqueOperation, visitorId) {
 
         posts = posts.map((post) => {
             post.isVisitorOwner = post.authId.equals(visitorId)
+            post.authId = undefined
             post.author = {
                 username: post.author.username,
                 avatar: new User(post.author, true).avatar
@@ -146,6 +147,21 @@ Post.deleteThisItem = function(postId, currentUserId) {
                 reject()
             }
         }catch {
+            reject()
+        }
+    })
+}
+
+Post.searchItem = function(searchTerm) {
+    return new Promise(async (resolve, reject) => {
+        if(typeof searchTerm == "string"){
+            let posts = await Post.reusablePostQuery([
+                // for text searching in mongoDB
+                {$match: {$text: {$search: searchTerm}}},
+                {$sort: {score: {$meta: "textScore"}}}
+            ])
+            resolve(posts)
+        }else {
             reject()
         }
     })
