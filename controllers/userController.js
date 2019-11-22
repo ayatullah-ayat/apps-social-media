@@ -1,6 +1,6 @@
 const User = require('../models/User')
 const Post = require('../models/Post')
-
+const Follow = require('../models/Follow')
 // user needs to loggedin to create new post
 exports.mustBeLoggedIn = function(req, res, next) {
     if(req.session.user){
@@ -71,10 +71,10 @@ exports.home = function(req, res) {
 exports.ifUserExists = function(req, res, next) {
     User.findByUserName(req.params.username).then((userDocument) => {
         // save req object with an property profileUser
-        console.log(userDocument)
         req.profileUser = userDocument
+        console.log('pass from ifUserExists')
         next()
-    }).catch((err) => {
+    }).catch((err) => { 
         res.render('404')
     })
 }
@@ -85,14 +85,42 @@ exports.profilePostsScreen = function(req, res) {
     .then((posts) => {
         res.render('profile', {
             posts: posts,
+            isVisitorProfile: req.isVisitorProfile,
             profileUserName: req.profileUser.username,
-            profileAvatar: req.profileUser.avatar
+            profileAvatar: req.profileUser.avatar,
+            isFollowing: req.isFollowing
         })
     })
     .catch(() => {
         res.render('404')
-    })
+    })    
+}
 
+exports.sharedProfileData = async function(req, res, next){
+    let isVisitorProfile = false
+    let isFollowing = false
+    if(req.session.user){
+        isFollowing = await Follow.isVisitorFollowing(req.profileUser._id, req.visitorId)
+        isVisitorProfile = req.profileUser._id.equals(req.session.user._id)
+    }
+    req.isFollowing = isFollowing
+    req.isVisitorProfile = isVisitorProfile
+    console.log("pass from shardProfileData")
+    next()
+}
 
-    
+exports.profileFollowersScreen = async function(req, res) {
+    try {
+        let followers = await Follow.getFollowersById(req.profileUser._id)
+
+        res.render('profile-followers', {
+            followers: followers,
+            profileUserName: req.profileUser.username,
+            profileAvatar: req.profileUser.avatar,
+            isFollowing: req.isFollowing,
+            isVisitorProfile: req.isVisitorProfile
+        })
+    } catch {
+        res.render("404")
+    }
 }
