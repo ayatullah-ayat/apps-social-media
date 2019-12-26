@@ -105,7 +105,6 @@ exports.sharedProfileData = async function(req, res, next){
     }
     req.isFollowing = isFollowing
     req.isVisitorProfile = isVisitorProfile
-    console.log("pass from shardProfileData")
     next()
 }
 
@@ -122,5 +121,20 @@ exports.profileFollowersScreen = async function(req, res) {
         })
     } catch {
         res.render("404")
+    }
+}
+exports.profileFollowingScreen = async function(req, res) {
+    try {
+        let following = await Follow.getFollowingById(req.profileUser._id)
+        
+        res.render('profile-following', {
+            following: following,
+            profileUserName: req.profileUser.username,
+            profileAvatar: req.profileUser.avatar,
+            isFollowing: req.isFollowing,
+            isVisitorProfile: req.isVisitorProfile
+        })
+    }catch {
+        res.render('404')
     }
 }
